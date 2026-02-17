@@ -1,0 +1,1297 @@
+@import "@xterm/xterm/css/xterm.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Theme tokens ──────────────────────────────────────────────── */
+
+:root[data-theme="dark"] {
+  --sb-bg-base: rgba(1, 4, 9, 0.85);
+  --sb-bg-body: rgba(13, 17, 23, 0.80);
+  --sb-bg-surface: rgba(22, 27, 34, 0.75);
+  --sb-bg-overlay: rgba(22, 27, 34, 0.90);
+  --sb-bg-input: rgba(13, 17, 23, 0.90);
+  --sb-bg-hover: rgba(22, 27, 34, 0.60);
+  --sb-bg-active: rgba(31, 41, 55, 0.70);
+  --sb-border: rgba(33, 38, 45, 0.60);
+  --sb-border-strong: rgba(48, 54, 61, 0.70);
+  --sb-text-primary: #e6edf3;
+  --sb-text-secondary: #8b949e;
+  --sb-text-muted: #6e7681;
+  --sb-text-placeholder: #484f58;
+  --sb-accent: #388bfd;
+  --sb-accent-blue: #58a6ff;
+  --sb-green: #238636;
+  --sb-green-bright: #3fb950;
+  --sb-red: #f85149;
+  --sb-yellow: #d29922;
+  --sb-user-bubble: #1f6feb;
+  --sb-glass-blur: 20px;
+  --sb-glass-saturate: 1.8;
+
+  /* Finder-specific */
+  --sb-finder-stripe: rgba(255, 255, 255, 0.02);
+  --sb-finder-select: #0058d0;
+  --sb-finder-select-text: #ffffff;
+  --sb-finder-header-bg: rgba(22, 27, 34, 0.90);
+  --sb-finder-header-border: rgba(48, 54, 61, 0.60);
+  --sb-finder-hover: rgba(56, 139, 253, 0.08);
+}
+
+:root[data-theme="light"] {
+  --sb-bg-base: rgba(246, 248, 250, 0.80);
+  --sb-bg-body: rgba(255, 255, 255, 0.75);
+  --sb-bg-surface: rgba(246, 248, 250, 0.70);
+  --sb-bg-overlay: rgba(255, 255, 255, 0.92);
+  --sb-bg-input: rgba(255, 255, 255, 0.90);
+  --sb-bg-hover: rgba(208, 215, 222, 0.40);
+  --sb-bg-active: rgba(208, 215, 222, 0.60);
+  --sb-border: rgba(208, 215, 222, 0.60);
+  --sb-border-strong: rgba(208, 215, 222, 0.80);
+  --sb-text-primary: #1f2328;
+  --sb-text-secondary: #656d76;
+  --sb-text-muted: #8b949e;
+  --sb-text-placeholder: #8b949e;
+  --sb-accent: #0969da;
+  --sb-accent-blue: #0969da;
+  --sb-green: #1a7f37;
+  --sb-green-bright: #2da44e;
+  --sb-red: #cf222e;
+  --sb-yellow: #9a6700;
+  --sb-user-bubble: #0969da;
+  --sb-glass-blur: 20px;
+  --sb-glass-saturate: 1.8;
+
+  /* Finder-specific */
+  --sb-finder-stripe: rgba(0, 0, 0, 0.02);
+  --sb-finder-select: #0058d0;
+  --sb-finder-select-text: #ffffff;
+  --sb-finder-header-bg: rgba(246, 248, 250, 0.95);
+  --sb-finder-header-border: rgba(208, 215, 222, 0.70);
+  --sb-finder-hover: rgba(9, 105, 218, 0.06);
+}
+
+/* Fallback: default to dark if no data-theme set */
+:root:not([data-theme]) {
+  --sb-bg-base: rgba(1, 4, 9, 0.85);
+  --sb-bg-body: rgba(13, 17, 23, 0.80);
+  --sb-bg-surface: rgba(22, 27, 34, 0.75);
+  --sb-bg-overlay: rgba(22, 27, 34, 0.90);
+  --sb-bg-input: rgba(13, 17, 23, 0.90);
+  --sb-bg-hover: rgba(22, 27, 34, 0.60);
+  --sb-bg-active: rgba(31, 41, 55, 0.70);
+  --sb-border: rgba(33, 38, 45, 0.60);
+  --sb-border-strong: rgba(48, 54, 61, 0.70);
+  --sb-text-primary: #e6edf3;
+  --sb-text-secondary: #8b949e;
+  --sb-text-muted: #6e7681;
+  --sb-text-placeholder: #484f58;
+  --sb-accent: #388bfd;
+  --sb-accent-blue: #58a6ff;
+  --sb-green: #238636;
+  --sb-green-bright: #3fb950;
+  --sb-red: #f85149;
+  --sb-yellow: #d29922;
+  --sb-user-bubble: #1f6feb;
+  --sb-glass-blur: 20px;
+  --sb-glass-saturate: 1.8;
+
+  /* Finder-specific */
+  --sb-finder-stripe: rgba(255, 255, 255, 0.02);
+  --sb-finder-select: #0058d0;
+  --sb-finder-select-text: #ffffff;
+  --sb-finder-header-bg: rgba(22, 27, 34, 0.90);
+  --sb-finder-header-border: rgba(48, 54, 61, 0.60);
+  --sb-finder-hover: rgba(56, 139, 253, 0.08);
+}
+
+/* ── Glass utility ─────────────────────────────────────────────── */
+
+.glass {
+  backdrop-filter: saturate(var(--sb-glass-saturate)) blur(var(--sb-glass-blur));
+  -webkit-backdrop-filter: saturate(var(--sb-glass-saturate)) blur(var(--sb-glass-blur));
+}
+
+/* ── Base styles ───────────────────────────────────────────────── */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--sb-bg-body);
+  color: var(--sb-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Thin scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sb-border-strong);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sb-text-placeholder);
+}
+
+/* Terminal — NO padding on .xterm; any padding breaks FitAddon row
+   calculations (prompt disappears below viewport) and creates a
+   visible gap that shows through as a white/light bar. */
+.xterm {
+  padding: 0;
+}
+.xterm-viewport::-webkit-scrollbar {
+  width: 6px;
+}
+.xterm-viewport::-webkit-scrollbar-thumb {
+  background: var(--sb-border-strong);
+  border-radius: 3px;
+}
+
+/* Placeholder color for inputs */
+textarea::placeholder,
+input::placeholder {
+  color: var(--sb-text-placeholder);
+}
+
+/* Remove focus outlines, use custom */
+button:focus-visible {
+  outline: 1px solid var(--sb-accent-blue);
+  outline-offset: -1px;
+  border-radius: 6px;
+}
+
+/* ── Animations ───────────────────────────────────────────────── */
+
+@keyframes toast-fade-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.toast-fade-in {
+  animation: toast-fade-in 0.2s ease-out;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PREMIUM 3D UI SYSTEM
+   Neumorphic design with soft shadows and depth
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 3D Shadow Variables ──────────────────────────────────────────── */
+
+:root[data-theme="dark"], :root:not([data-theme]) {
+  /* Outer shadows (raised effect) */
+  --sb-shadow-raised:
+    4px 4px 8px rgba(0, 0, 0, 0.4),
+    -2px -2px 6px rgba(255, 255, 255, 0.03);
+
+  /* Deeper shadow for elevated elements */
+  --sb-shadow-elevated:
+    6px 6px 12px rgba(0, 0, 0, 0.5),
+    -3px -3px 8px rgba(255, 255, 255, 0.04);
+
+  /* Inset shadow (pressed effect) */
+  --sb-shadow-inset:
+    inset 3px 3px 6px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+
+  /* Soft glow for accents */
+  --sb-shadow-glow: 0 0 20px rgba(56, 139, 253, 0.3);
+
+  /* Button-specific shadows */
+  --sb-btn-shadow:
+    3px 3px 6px rgba(0, 0, 0, 0.35),
+    -1px -1px 3px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  --sb-btn-shadow-hover:
+    4px 4px 10px rgba(0, 0, 0, 0.45),
+    -2px -2px 5px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  --sb-btn-shadow-active:
+    inset 2px 2px 5px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.03);
+
+  /* Card shadows */
+  --sb-card-shadow:
+    8px 8px 16px rgba(0, 0, 0, 0.4),
+    -4px -4px 10px rgba(255, 255, 255, 0.02);
+
+  /* Floating element shadow */
+  --sb-float-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme="light"] {
+  --sb-shadow-raised:
+    4px 4px 8px rgba(0, 0, 0, 0.08),
+    -2px -2px 6px rgba(255, 255, 255, 0.8);
+
+  --sb-shadow-elevated:
+    6px 6px 14px rgba(0, 0, 0, 0.12),
+    -4px -4px 10px rgba(255, 255, 255, 0.9);
+
+  --sb-shadow-inset:
+    inset 3px 3px 6px rgba(0, 0, 0, 0.08),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+
+  --sb-shadow-glow: 0 0 20px rgba(9, 105, 218, 0.25);
+
+  --sb-btn-shadow:
+    3px 3px 6px rgba(0, 0, 0, 0.1),
+    -2px -2px 4px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  --sb-btn-shadow-hover:
+    4px 4px 10px rgba(0, 0, 0, 0.12),
+    -3px -3px 6px rgba(255, 255, 255, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  --sb-btn-shadow-active:
+    inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.7);
+
+  --sb-card-shadow:
+    8px 8px 20px rgba(0, 0, 0, 0.1),
+    -6px -6px 14px rgba(255, 255, 255, 0.9);
+
+  --sb-float-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.15),
+    0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* ── 3D Button Base ───────────────────────────────────────────────── */
+
+.btn-3d {
+  position: relative;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--sb-btn-shadow);
+  transform: translateY(0);
+}
+
+.btn-3d:hover {
+  box-shadow: var(--sb-btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.btn-3d:active {
+  box-shadow: var(--sb-btn-shadow-active);
+  transform: translateY(1px);
+}
+
+/* Primary variant */
+.btn-3d-primary {
+  background: linear-gradient(145deg, var(--sb-accent-blue), var(--sb-accent));
+  color: white;
+  box-shadow:
+    var(--sb-btn-shadow),
+    0 4px 12px rgba(56, 139, 253, 0.3);
+}
+
+.btn-3d-primary:hover {
+  box-shadow:
+    var(--sb-btn-shadow-hover),
+    0 6px 16px rgba(56, 139, 253, 0.4);
+}
+
+/* Success variant */
+.btn-3d-success {
+  background: linear-gradient(145deg, var(--sb-green-bright), var(--sb-green));
+  color: white;
+  box-shadow:
+    var(--sb-btn-shadow),
+    0 4px 12px rgba(35, 134, 54, 0.3);
+}
+
+/* Danger variant */
+.btn-3d-danger {
+  background: linear-gradient(145deg, #ff6b6b, var(--sb-red));
+  color: white;
+  box-shadow:
+    var(--sb-btn-shadow),
+    0 4px 12px rgba(248, 81, 73, 0.3);
+}
+
+/* Small button */
+.btn-3d-sm {
+  padding: 5px 10px;
+  font-size: 11px;
+  border-radius: 8px;
+}
+
+/* Icon button */
+.btn-3d-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+/* btn-3d-icon-sm full styles are in the upgraded section below */
+
+/* ── 3D Cards ─────────────────────────────────────────────────────── */
+
+.card-3d {
+  background: var(--sb-bg-surface);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--sb-card-shadow);
+  border: 1px solid var(--sb-border);
+}
+
+.card-3d-elevated {
+  box-shadow: var(--sb-shadow-elevated);
+}
+
+.card-3d-floating {
+  box-shadow: var(--sb-float-shadow);
+}
+
+/* ── 3D Input Fields ──────────────────────────────────────────────── */
+
+.input-3d {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--sb-border);
+  border-radius: 10px;
+  background: var(--sb-bg-input);
+  color: var(--sb-text-primary);
+  font-size: 13px;
+  box-shadow: var(--sb-shadow-inset);
+  transition: all 0.15s ease;
+}
+
+.input-3d:focus {
+  outline: none;
+  border-color: var(--sb-accent-blue);
+  box-shadow:
+    var(--sb-shadow-inset),
+    0 0 0 3px rgba(56, 139, 253, 0.15);
+}
+
+.input-3d::placeholder {
+  color: var(--sb-text-placeholder);
+}
+
+/* ── 3D Tabs ──────────────────────────────────────────────────────── */
+
+.tab-3d {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sb-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tab-3d:hover {
+  color: var(--sb-text-primary);
+  background: var(--sb-bg-hover);
+}
+
+.tab-3d-active {
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-primary);
+  box-shadow: var(--sb-btn-shadow);
+}
+
+/* ── 3D Toggle Switch ─────────────────────────────────────────────── */
+
+.toggle-3d {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--sb-bg-surface);
+  box-shadow: var(--sb-shadow-inset);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-3d-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--sb-text-secondary);
+  box-shadow: var(--sb-btn-shadow);
+  transition: all 0.2s ease;
+}
+
+.toggle-3d-active {
+  background: var(--sb-accent);
+}
+
+.toggle-3d-active .toggle-3d-knob {
+  left: 23px;
+  background: white;
+  box-shadow:
+    var(--sb-btn-shadow),
+    0 0 8px rgba(56, 139, 253, 0.4);
+}
+
+/* ── 3D Sidebar Icons ─────────────────────────────────────────────── */
+
+.sidebar-icon-3d {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--sb-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sidebar-icon-3d:hover {
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-primary);
+  box-shadow: var(--sb-btn-shadow);
+  transform: translateY(-1px);
+}
+
+.sidebar-icon-3d-active {
+  background: var(--sb-bg-surface);
+  color: var(--sb-accent-blue);
+  box-shadow: var(--sb-btn-shadow);
+}
+
+/* ── 3D Pill / Badge ──────────────────────────────────────────────── */
+
+.pill-3d {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-secondary);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.2),
+    -1px -1px 2px rgba(255, 255, 255, 0.03);
+}
+
+.pill-3d-primary {
+  background: var(--sb-accent);
+  color: white;
+}
+
+.pill-3d-success {
+  background: var(--sb-green);
+  color: white;
+}
+
+/* ── 3D Tooltip ───────────────────────────────────────────────────── */
+
+.tooltip-3d {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--sb-bg-overlay);
+  color: var(--sb-text-primary);
+  font-size: 12px;
+  box-shadow: var(--sb-float-shadow);
+  border: 1px solid var(--sb-border);
+}
+
+/* ── 3D Dropdown / Menu ───────────────────────────────────────────── */
+
+.dropdown-3d {
+  border-radius: 12px;
+  background: var(--sb-bg-overlay);
+  border: 1px solid var(--sb-border);
+  box-shadow: var(--sb-float-shadow);
+  overflow: hidden;
+}
+
+.dropdown-3d-item {
+  padding: 10px 14px;
+  color: var(--sb-text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.dropdown-3d-item:hover {
+  background: var(--sb-bg-hover);
+}
+
+.dropdown-3d-item-active {
+  background: var(--sb-bg-surface);
+  color: var(--sb-accent-blue);
+}
+
+/* ── 3D Progress Bar ──────────────────────────────────────────────── */
+
+.progress-3d {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--sb-bg-surface);
+  box-shadow: var(--sb-shadow-inset);
+  overflow: hidden;
+}
+
+.progress-3d-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--sb-accent), var(--sb-accent-blue));
+  box-shadow: 0 0 8px rgba(56, 139, 253, 0.4);
+  transition: width 0.3s ease;
+}
+
+/* ── 3D Slider / Knob ─────────────────────────────────────────────── */
+
+.slider-3d {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--sb-bg-surface);
+  box-shadow: var(--sb-shadow-inset);
+}
+
+.slider-3d::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--sb-accent-blue), var(--sb-accent));
+  box-shadow: var(--sb-btn-shadow);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.slider-3d::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: var(--sb-btn-shadow-hover);
+}
+
+/* ── 3D Separator ─────────────────────────────────────────────────── */
+
+.separator-3d {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--sb-border-strong),
+    transparent
+  );
+  margin: 12px 0;
+}
+
+/* ── 3D Avatar ────────────────────────────────────────────────────── */
+
+.avatar-3d {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--sb-bg-surface);
+  box-shadow: var(--sb-btn-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sb-text-secondary);
+  font-weight: 600;
+}
+
+/* ── Utility: Depth Layers ────────────────────────────────────────── */
+
+.depth-0 { box-shadow: none; }
+.depth-1 { box-shadow: var(--sb-btn-shadow); }
+.depth-2 { box-shadow: var(--sb-shadow-raised); }
+.depth-3 { box-shadow: var(--sb-shadow-elevated); }
+.depth-4 { box-shadow: var(--sb-float-shadow); }
+.depth-inset { box-shadow: var(--sb-shadow-inset); }
+
+/* ── Utility: Glow Effects ────────────────────────────────────────── */
+
+.glow-accent {
+  box-shadow: var(--sb-shadow-glow);
+}
+
+.glow-success {
+  box-shadow: 0 0 20px rgba(35, 134, 54, 0.3);
+}
+
+.glow-danger {
+  box-shadow: 0 0 20px rgba(248, 81, 73, 0.3);
+}
+
+/* ── Animation: Pulse Glow ────────────────────────────────────────── */
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: var(--sb-btn-shadow); }
+  50% { box-shadow: var(--sb-btn-shadow), var(--sb-shadow-glow); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ── Animation: Float ─────────────────────────────────────────────── */
+
+@keyframes float-3d {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-float {
+  animation: float-3d 3s ease-in-out infinite;
+}
+
+/* ── Animation: Press ─────────────────────────────────────────────── */
+
+@keyframes press-3d {
+  0% { transform: scale(1); box-shadow: var(--sb-btn-shadow); }
+  50% { transform: scale(0.97); box-shadow: var(--sb-btn-shadow-active); }
+  100% { transform: scale(1); box-shadow: var(--sb-btn-shadow); }
+}
+
+.animate-press {
+  animation: press-3d 0.2s ease;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FINDER-STYLE FILE EXPLORER
+   macOS Finder list-view inspired layout
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Toolbar ─────────────────────────────────────────────────────── */
+
+.finder-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--sb-bg-base);
+  border-bottom: 1px solid var(--sb-border);
+  flex-wrap: wrap;
+}
+
+/* finder-toolbar-btn base styles are in the upgraded section below */
+
+.finder-toolbar-btn-active {
+  background: var(--sb-accent) !important;
+  color: white !important;
+  box-shadow: var(--sb-btn-shadow), 0 0 8px rgba(56, 139, 253, 0.3) !important;
+}
+
+.finder-toolbar-btn-active .finder-btn-label {
+  opacity: 1;
+}
+
+/* ── Breadcrumb path bar ─────────────────────────────────────────── */
+
+.finder-breadcrumb {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: var(--sb-bg-surface);
+  border: 1px solid var(--sb-border);
+  min-width: 0;
+}
+
+.finder-breadcrumb::-webkit-scrollbar {
+  height: 0;
+}
+
+.finder-breadcrumb-seg {
+  display: flex;
+  align-items: center;
+  padding: 2px 6px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--sb-text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.1s ease;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.finder-breadcrumb-seg:hover {
+  background: var(--sb-bg-hover);
+  color: var(--sb-accent-blue);
+}
+
+.finder-breadcrumb-seg:last-child {
+  color: var(--sb-text-primary);
+  font-weight: 500;
+}
+
+.finder-breadcrumb-chevron {
+  color: var(--sb-text-muted);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ── Column header bar ───────────────────────────────────────────── */
+
+.finder-header {
+  display: flex;
+  align-items: center;
+  height: 22px;
+  background: var(--sb-finder-header-bg);
+  border-bottom: 1px solid var(--sb-finder-header-border);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.finder-header-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 0 10px;
+  border: none;
+  border-right: 1px solid var(--sb-finder-header-border);
+  background: transparent;
+  color: var(--sb-text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: none;
+  cursor: pointer;
+  transition: color 0.1s ease;
+  white-space: nowrap;
+}
+
+.finder-header-cell:hover {
+  color: var(--sb-text-primary);
+}
+
+.finder-header-cell:last-child {
+  border-right: none;
+}
+
+/* ── Column widths (shared between header and rows) ──────────── */
+
+.finder-col-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.finder-col-date {
+  width: 160px;
+  flex-shrink: 0;
+  padding: 0 10px;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.finder-col-size {
+  width: 80px;
+  flex-shrink: 0;
+  padding: 0 10px;
+  font-size: 11px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.finder-col-kind {
+  width: 130px;
+  flex-shrink: 0;
+  padding: 0 10px;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── File row ────────────────────────────────────────────────────── */
+
+.finder-row {
+  display: flex;
+  align-items: center;
+  cursor: default;
+  font-size: 13px;
+  transition: background 0.05s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.finder-row:hover {
+  background: var(--sb-finder-hover) !important;
+}
+
+.finder-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.finder-rename-input {
+  flex: 1;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+  outline: none;
+}
+
+/* ── Status bar ──────────────────────────────────────────────────── */
+
+.finder-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 12px;
+  background: var(--sb-bg-base);
+  border-top: 1px solid var(--sb-border);
+  color: var(--sb-text-muted);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* ── Responsive: hide columns on narrow widths ───────────────────── */
+
+@media (max-width: 700px) {
+  .finder-col-kind {
+    display: none;
+  }
+}
+
+@media (max-width: 550px) {
+  .finder-col-date {
+    display: none;
+  }
+  .finder-col-size {
+    width: 60px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MINIMIZE / RESTORE TABS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Chat restore tab (right edge when minimized) ────────────────── */
+
+.chat-restore-tab {
+  position: relative;
+  width: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  background: var(--sb-bg-base);
+  border-left: 1px solid var(--sb-border);
+  color: var(--sb-text-secondary);
+  transition: all 0.2s ease;
+  animation: slide-in-right 0.25s ease-out;
+}
+
+.chat-restore-tab:hover {
+  background: var(--sb-bg-surface);
+  color: var(--sb-accent-blue);
+  width: 42px;
+  box-shadow: -4px 0 16px rgba(56, 139, 253, 0.15);
+}
+
+.chat-restore-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+@keyframes slide-in-right {
+  from { width: 0; opacity: 0; }
+  to   { width: 36px; opacity: 1; }
+}
+
+/* ── Explorer minimized pull-up bar ──────────────────────────────── */
+
+.explorer-minimized-bar {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  background: var(--sb-bg-base);
+  border-top: 1px solid var(--sb-border);
+  color: var(--sb-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.explorer-minimized-bar:hover {
+  background: var(--sb-bg-surface);
+  color: var(--sb-accent-blue);
+  box-shadow: 0 -4px 12px rgba(56, 139, 253, 0.1);
+}
+
+.explorer-minimized-bar .pull-indicator {
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--sb-border-strong);
+  transition: all 0.2s ease;
+}
+
+.explorer-minimized-bar:hover .pull-indicator {
+  background: var(--sb-accent-blue);
+  width: 48px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   UPGRADED TOOLBAR BUTTONS — 3D + BIGGER + TOOLTIPS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Finder toolbar buttons — upgraded to 3D and bigger ──────────── */
+
+.finder-toolbar-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--sb-btn-shadow);
+  position: relative;
+}
+
+.finder-toolbar-btn:hover {
+  background: var(--sb-bg-hover);
+  color: var(--sb-text-primary);
+  box-shadow: var(--sb-btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.finder-toolbar-btn:active {
+  box-shadow: var(--sb-btn-shadow-active);
+  transform: translateY(1px);
+}
+
+.finder-toolbar-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Finder labeled toolbar buttons — icon + text tag below ──────── */
+
+.finder-toolbar-btn-labeled {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 8px;
+  min-width: 42px;
+  height: auto;
+  border: none;
+  border-radius: 8px;
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--sb-btn-shadow);
+  position: relative;
+}
+
+.finder-toolbar-btn-labeled:hover {
+  background: var(--sb-bg-hover);
+  color: var(--sb-text-primary);
+  box-shadow: var(--sb-btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.finder-toolbar-btn-labeled:active {
+  box-shadow: var(--sb-btn-shadow-active);
+  transform: translateY(1px);
+}
+
+.finder-toolbar-btn-labeled svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.finder-btn-label {
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+}
+
+.finder-toolbar-btn-labeled:hover .finder-btn-label {
+  opacity: 1;
+}
+
+/* ── Terminal toolbar buttons — upgraded to 3D and bigger ────────── */
+
+.toolbar-btn-3d {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--sb-btn-shadow);
+  position: relative;
+}
+
+.toolbar-btn-3d:hover {
+  background: var(--sb-bg-hover);
+  color: var(--sb-text-primary);
+  box-shadow: var(--sb-btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.toolbar-btn-3d:active {
+  box-shadow: var(--sb-btn-shadow-active);
+  transform: translateY(1px);
+}
+
+.toolbar-btn-3d svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Chat header icon buttons — 3D styled ────────────────────────── */
+
+.btn-3d-icon-sm {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--sb-btn-shadow);
+}
+
+.btn-3d-icon-sm:hover {
+  background: var(--sb-bg-hover);
+  color: var(--sb-text-primary);
+  box-shadow: var(--sb-btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.btn-3d-icon-sm:active {
+  box-shadow: var(--sb-btn-shadow-active);
+  transform: translateY(1px);
+}
+
+/* ── Custom tooltip via [title] — CSS-only, 3D styled ────────────── */
+
+.finder-toolbar-btn[title],
+.finder-toolbar-btn-labeled[title],
+.toolbar-btn-3d[title],
+.btn-3d-icon-sm[title],
+.sidebar-icon-3d[title] {
+  position: relative;
+}
+
+.finder-toolbar-btn[title]::after,
+.finder-toolbar-btn-labeled[title]::after,
+.toolbar-btn-3d[title]::after,
+.btn-3d-icon-sm[title]::after,
+.sidebar-icon-3d[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: var(--sb-bg-overlay);
+  color: var(--sb-text-primary);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: var(--sb-float-shadow);
+  border: 1px solid var(--sb-border);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 1000;
+}
+
+.finder-toolbar-btn[title]:hover::after,
+.finder-toolbar-btn-labeled[title]:hover::after,
+.toolbar-btn-3d[title]:hover::after,
+.btn-3d-icon-sm[title]:hover::after,
+.sidebar-icon-3d[title]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* Sidebar tooltips appear to the right instead of above */
+.sidebar-icon-3d[title]::after {
+  bottom: auto;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%) scale(0.9);
+}
+
+.sidebar-icon-3d[title]:hover::after {
+  transform: translateY(-50%) scale(1);
+}
+
+/* ── Editor toolbar command buttons — 3D styled ──────────────────── */
+
+.editor-cmd-btn {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: var(--sb-bg-surface);
+  color: var(--sb-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--sb-btn-shadow);
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.editor-cmd-btn:hover {
+  background: var(--sb-bg-hover);
+  color: var(--sb-text-primary);
+  box-shadow: var(--sb-btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.editor-cmd-btn:active {
+  box-shadow: var(--sb-btn-shadow-active);
+  transform: translateY(1px);
+}
+
+/* Editor exit button */
+.editor-exit-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(248, 81, 73, 0.12);
+  color: var(--sb-red);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(248, 81, 73, 0.15);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.editor-exit-btn:hover {
+  background: rgba(248, 81, 73, 0.22);
+  box-shadow: 0 2px 8px rgba(248, 81, 73, 0.25);
+  transform: translateY(-1px);
+}
+
+.editor-exit-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 0px 2px rgba(248, 81, 73, 0.2);
+}
+
+/* Add editor buttons to tooltip system */
+.editor-cmd-btn[title],
+.editor-exit-btn[title] {
+  position: relative;
+}
+
+.editor-cmd-btn[title]::after,
+.editor-exit-btn[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: var(--sb-bg-overlay);
+  color: var(--sb-text-primary);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: var(--sb-float-shadow);
+  border: 1px solid var(--sb-border);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 1000;
+}
+
+.editor-cmd-btn[title]:hover::after,
+.editor-exit-btn[title]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}

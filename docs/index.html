@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LumeShell — The Intelligent Terminal for macOS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --bg-primary: #0a0e14;
+            --bg-secondary: #0d1117;
+            --bg-card: #131922;
+            --bg-card-hover: #161d27;
+            --border-subtle: rgba(255,255,255,0.06);
+            --border-medium: rgba(255,255,255,0.1);
+            --text-primary: #f0f4f8;
+            --text-secondary: #8b949e;
+            --text-muted: #5a6370;
+            --accent: #388bfd;
+            --accent-glow: rgba(56, 139, 253, 0.15);
+            --accent-green: #3fb950;
+            --accent-purple: #a371f7;
+            --accent-orange: #d29922;
+            --gradient-hero: linear-gradient(135deg, #388bfd 0%, #a371f7 50%, #3fb950 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(10, 14, 20, 0.8);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--text-primary); }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(56,139,253,0.12) 0%, rgba(163,113,247,0.06) 40%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            border: 1px solid var(--border-medium);
+            background: rgba(56,139,253,0.08);
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 9vw, 6.5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #388bfd 60%, #a371f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .tagline {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(56,139,253,0.35);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            background: transparent;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: 1px solid var(--border-medium);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .hero-screenshot {
+            margin-top: 4rem;
+            max-width: 1000px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-screenshot img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid var(--border-medium);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05) inset;
+        }
+
+        /* ===== SECTIONS ===== */
+        section {
+            padding: 7rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header .section-subtitle {
+            margin: 0 auto;
+        }
+
+        /* ===== FEATURE CATEGORY ===== */
+        .feature-category {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-category + .feature-category {
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .feature-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .feature-split.reverse { direction: rtl; }
+        .feature-split.reverse > * { direction: ltr; }
+
+        .feature-info { max-width: 480px; }
+
+        .feature-info .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-info .icon.blue { background: rgba(56,139,253,0.12); }
+        .feature-info .icon.green { background: rgba(63,185,80,0.12); }
+        .feature-info .icon.purple { background: rgba(163,113,247,0.12); }
+        .feature-info .icon.orange { background: rgba(210,153,34,0.12); }
+
+        .feature-info h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .feature-info p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .feature-list li::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .feature-visual {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+        }
+
+        .feature-visual:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+            border-color: var(--border-medium);
+        }
+
+        .feature-visual img {
+            width: 100%;
+            display: block;
+        }
+
+        /* ===== SCREENSHOT PAIR ===== */
+        .screenshot-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .screenshot-card {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+            border-color: var(--border-medium);
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            display: block;
+        }
+
+        .screenshot-card .caption {
+            padding: 0.875rem 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* ===== FEATURES GRID ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--border-medium);
+            background: var(--bg-card-hover);
+            transform: translateY(-3px);
+        }
+
+        .feature-card .card-icon {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h4 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ===== TECH STACK ===== */
+        .tech-section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .tech-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+        }
+
+        .tech-card .tech-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .tech-card .tech-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-subtle);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        footer .footer-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .feature-split { grid-template-columns: 1fr; gap: 2.5rem; }
+            .feature-split.reverse { direction: ltr; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .tech-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 1rem; }
+            .nav-links { display: none; }
+            .hero { padding: 6rem 1.5rem 3rem; }
+            .hero-cta-group { flex-direction: column; }
+            .features-grid { grid-template-columns: 1fr; }
+            .screenshot-pair { grid-template-columns: 1fr; }
+            .tech-grid { grid-template-columns: 1fr; }
+            .feature-category { padding: 3rem 1.5rem; }
+            section { padding: 4rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav>
+        <div class="nav-logo">LumeShell</div>
+        <ul class="nav-links">
+            <li><a href="#ai">AI Chat</a></li>
+            <li><a href="#explorer">File Explorer</a></li>
+            <li><a href="#terminal">Terminal</a></li>
+            <li><a href="#themes">Themes</a></li>
+            <li><a href="#settings">Settings</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">Built for macOS</div>
+        <h1>LumeShell</h1>
+        <p class="tagline">
+            A modern terminal emulator powered by AI. Built with Electron, React, and xterm.js for a premium development experience.
+        </p>
+        <div class="hero-cta-group">
+            <a href="#ai" class="btn-primary">Explore Features &#8595;</a>
+            <a href="#tech" class="btn-secondary">View Tech Stack</a>
+        </div>
+        <div class="hero-screenshot">
+            <img src="AI-chatbot%20for%20commandhelp.png" alt="LumeShell Terminal with AI Chat" loading="lazy">
+        </div>
+    </section>
+
+    <!-- ===== AI CHAT ===== -->
+    <div class="feature-category" id="ai">
+        <div class="feature-split">
+            <div class="feature-info">
+                <div class="icon blue">&#x1F4AC;</div>
+                <span class="section-label">AI Assistant</span>
+                <h3>Context-Aware AI Chat</h3>
+                <p>
+                    An integrated AI assistant that understands your terminal session.
+                    Ask questions about commands, debug errors, and get explanations &mdash;
+                    all without leaving your terminal.
+                </p>
+                <ul class="feature-list">
+                    <li>Understands your current working directory and recent commands</li>
+                    <li>Explains command output and error messages</li>
+                    <li>Suggests fixes with severity-level indicators</li>
+                    <li>Supports Ollama local models and Gemini</li>
+                </ul>
+            </div>
+            <div class="feature-visual">
+                <img src="AI-chatbot%20for%20commandhelp.png" alt="AI chatbot providing command help" loading="lazy">
+            </div>
+        </div>
+        <div class="screenshot-pair">
+            <div class="screenshot-card">
+                <img src="AI_help%20and%20explanations.png" alt="AI help and explanations" loading="lazy">
+                <div class="caption">In-depth help and explanations for any command</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="clean%20explanation%20with%20severity%20of%20the%20command.png" alt="Command severity explanation" loading="lazy">
+                <div class="caption">Clear explanations with command severity indicators</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FILE EXPLORER ===== -->
+    <div class="feature-category" id="explorer">
+        <div class="feature-split reverse">
+            <div class="feature-info">
+                <div class="icon green">&#x1F4C1;</div>
+                <span class="section-label">File Management</span>
+                <h3>Integrated File Explorer</h3>
+                <p>
+                    Browse, create, rename, and manage files directly from the sidebar.
+                    Syncs automatically with your terminal's current working directory
+                    so you always see what matters.
+                </p>
+                <ul class="feature-list">
+                    <li>Syncs with terminal CWD in real-time</li>
+                    <li>Context menu with rename, delete, copy path</li>
+                    <li>Built-in file editor with tab switching</li>
+                    <li>Drag files directly into the terminal</li>
+                </ul>
+            </div>
+            <div class="feature-visual">
+                <img src="intuitive%20file%20explorer.png" alt="Intuitive file explorer" loading="lazy">
+            </div>
+        </div>
+        <div class="screenshot-pair">
+            <div class="screenshot-card">
+                <img src="file%20folder%20with%20all%20the%20options%20you%20need%20to%20navigate%20files%20easily.png" alt="File navigation options" loading="lazy">
+                <div class="caption">Full file navigation with context menu options</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="New%20file%20editor%20with%20ability%20to%20switch%20between%20files.png" alt="Built-in file editor" loading="lazy">
+                <div class="caption">Built-in file editor with multi-file tab switching</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TERMINAL FEATURES ===== -->
+    <div class="feature-category" id="terminal">
+        <div class="feature-split">
+            <div class="feature-info">
+                <div class="icon purple">&#x2318;</div>
+                <span class="section-label">Terminal</span>
+                <h3>Powerful Terminal Experience</h3>
+                <p>
+                    Multiple tabs, drag-to-reorder, inline rename, and built-in search.
+                    Everything you need to manage complex workflows in one window.
+                </p>
+                <ul class="feature-list">
+                    <li>Multiple terminal tabs with drag-to-reorder</li>
+                    <li>Double-click to rename any tab</li>
+                    <li>Cmd+F search through terminal output</li>
+                    <li>Smart autocomplete from command history</li>
+                </ul>
+            </div>
+            <div class="feature-visual">
+                <img src="Renaming%20the%20terminals%20and%20side%20by%20side%20windows.png" alt="Terminal tabs and renaming" loading="lazy">
+            </div>
+        </div>
+        <div class="screenshot-pair">
+            <div class="screenshot-card">
+                <img src="cmdf%20for%20searching%20in%20terminal.png" alt="Terminal search with Cmd+F" loading="lazy">
+                <div class="caption">Built-in terminal search with Cmd+F</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Autofill%20based%20on%20previous%20command%20history.png" alt="Command history autofill" loading="lazy">
+                <div class="caption">Smart autofill powered by command history</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== THEMES & CUSTOMIZATION ===== -->
+    <div class="feature-category" id="themes">
+        <div class="feature-split reverse">
+            <div class="feature-info">
+                <div class="icon orange">&#x1F3A8;</div>
+                <span class="section-label">Customization</span>
+                <h3>Beautiful Themes & Settings</h3>
+                <p>
+                    Six premium built-in themes with full customization support.
+                    Adjust colors, fonts, opacity, and more to match your style perfectly.
+                </p>
+                <ul class="feature-list">
+                    <li>Six handcrafted theme presets</li>
+                    <li>Full light mode support</li>
+                    <li>Custom colors, fonts, and terminal opacity</li>
+                    <li>Per-detail fine-tuning for every setting</li>
+                </ul>
+            </div>
+            <div class="feature-visual">
+                <img src="completely%20customizable%20themes.png" alt="Customizable themes" loading="lazy">
+            </div>
+        </div>
+        <div class="screenshot-pair">
+            <div class="screenshot-card">
+                <img src="themes.png" alt="Theme presets" loading="lazy">
+                <div class="caption">Six premium theme presets to choose from</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Light%20mode.png" alt="Light mode" loading="lazy">
+                <div class="caption">Full light mode for bright environments</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="feature-category" id="settings">
+        <div class="feature-split">
+            <div class="feature-info">
+                <div class="icon blue">&#x2699;</div>
+                <span class="section-label">Configuration</span>
+                <h3>Every Detail, Your Way</h3>
+                <p>
+                    Configure AI providers, manage dropdown options, and fine-tune
+                    every aspect of your terminal. Use your local Ollama models or
+                    sign in with Gemini for cloud AI.
+                </p>
+                <ul class="feature-list">
+                    <li>Choose between Ollama local models and Gemini</li>
+                    <li>Dropdown menus for easy file and session management</li>
+                    <li>Granular control over every setting</li>
+                </ul>
+            </div>
+            <div class="feature-visual">
+                <img src="Useyour%20local%20model%20or%20sign%20in%20for%20gemini.png" alt="AI provider settings" loading="lazy">
+            </div>
+        </div>
+        <div class="screenshot-pair">
+            <div class="screenshot-card">
+                <img src="extra%20feature%20drop%20down%20to%20handle%20each%20fully%20very%20easily.png" alt="Feature dropdown menus" loading="lazy">
+                <div class="caption">Dropdown menus for managing sessions and files</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="completely%20customizable%20themes.png" alt="Full customization" loading="lazy">
+                <div class="caption">Complete control over appearance and behavior</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ALL FEATURES GRID ===== -->
+    <section>
+        <div class="section-header">
+            <span class="section-label">Overview</span>
+            <h2 class="section-title">Everything you need, built in</h2>
+            <p class="section-subtitle">
+                No plugins, no extensions. Every feature is native and works out of the box.
+            </p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4AC;</div>
+                <h4>AI Chat Panel</h4>
+                <p>Context-aware assistant that understands your terminal session and helps with commands.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4C1;</div>
+                <h4>File Explorer</h4>
+                <p>Sidebar file browser synced with your terminal's current working directory.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F50D;</div>
+                <h4>Terminal Search</h4>
+                <p>Find anything in your terminal output instantly with Cmd+F.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F3A8;</div>
+                <h4>Theme Presets</h4>
+                <p>Six premium themes with full customization of colors, fonts, and opacity.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4CB;</div>
+                <h4>Tab Management</h4>
+                <p>Drag-to-reorder tabs, double-click to rename, and multiple sessions at once.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F552;</div>
+                <h4>Smart Autocomplete</h4>
+                <p>History-based command suggestions with keyboard navigation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4DD;</div>
+                <h4>Built-in Editor</h4>
+                <p>Edit files without leaving the terminal. Switch between open files with tabs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4C2;</div>
+                <h4>Drag &amp; Drop</h4>
+                <p>Drag files from the explorer directly into the terminal to insert their path.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x2699;</div>
+                <h4>AI Providers</h4>
+                <p>Use local models via Ollama or cloud models via Gemini. Your choice.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TECH STACK ===== -->
+    <div class="tech-section" id="tech">
+        <div class="section-header">
+            <span class="section-label">Under the hood</span>
+            <h2 class="section-title">Built with modern tech</h2>
+            <p class="section-subtitle">
+                A carefully chosen stack for performance, reliability, and a native macOS feel.
+            </p>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-name">Electron 40</div>
+                <div class="tech-desc">Native desktop framework</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">React 19</div>
+                <div class="tech-desc">UI component library</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">xterm.js</div>
+                <div class="tech-desc">Terminal emulation</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">node-pty</div>
+                <div class="tech-desc">PTY process management</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">Tailwind CSS v3</div>
+                <div class="tech-desc">Utility-first styling</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">Zustand</div>
+                <div class="tech-desc">Lightweight state management</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">Vite 5</div>
+                <div class="tech-desc">Fast build tooling</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">TypeScript</div>
+                <div class="tech-desc">Type-safe development</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">LumeShell</div>
+        <p>The intelligent terminal for macOS</p>
+        <p style="margin-top: 1rem;">&copy; 2026 LumeShell. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

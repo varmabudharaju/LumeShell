@@ -1,0 +1,11 @@
+name = "shellbuddy-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+# KV namespace for rate limiting
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "2a639ef365d5418ebc7cb2720f5395a0"
+
+# Set these via `wrangler secret put`:
+#   wrangler secret put GEMINI_API_KEY
