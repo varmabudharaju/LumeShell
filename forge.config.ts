@@ -20,6 +20,9 @@ const config: ForgeConfig = {
     asar: {
       unpack: '{**/node-pty/**/*,**/*.node}',
     },
+    osxSign: {
+      identity: 'Apple Development: varmabudharaju@icloud.com (BT7LHTWS2M)',
+    },
   },
   rebuildConfig: {},
   hooks: {
